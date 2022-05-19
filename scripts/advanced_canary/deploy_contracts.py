@@ -29,18 +29,3 @@ def main():
     add_advanced_canary_as_vrf_consumer(
         account, canary_advanced_collectible, vrf_subscriptionManager
     )
-
-    # 4 Canary Advanced NFT can be now minted
-    token_id = mint_advanced_canary_collectible(account, canary_advanced_collectible)
-
-    # Chainlink has now received the request for randomness and is managing the processing asynchronously. In a a Front End we would have manage the UX differently.
-    print(
-        f"Waiting for Chainlink to provide randomness....via request {vrf_subscriptionManager.s_requestId()}"
-    )
-    time.sleep(180)
-
-    reveal_advanced_canary_collectible_token(
-        account, canary_advanced_collectible, token_id
-    )
-
-    print("Thanks Chainlink for providing secure randomless - Sincerly Chad ! ")

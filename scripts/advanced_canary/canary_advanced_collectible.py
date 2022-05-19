@@ -26,7 +26,7 @@ def add_advanced_canary_as_vrf_consumer(
 
 
 def mint_advanced_canary_collectible(account, canary_advanced_collectible):
-    mint_tx = canary_advanced_collectible.mintCollection({"from": account})
+    mint_tx = canary_advanced_collectible.mintToken({"from": account})
     mint_tx.wait(1)
 
     token_id = canary_advanced_collectible.tokenCounter()

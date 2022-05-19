@@ -60,7 +60,7 @@ contract AdvancedCanaryCollectible is ERC721, ERC721URIStorage {
     @Dev args : none
     #Dec Returns: tokenId that has just been minted.
     */
-    function mintCollection() public onlyOwner returns (uint256) {
+    function mintToken() public onlyOwner returns (uint256) {
         tokenCounter.increment();
         _safeMint(msg.sender, tokenCounter.current());
 
