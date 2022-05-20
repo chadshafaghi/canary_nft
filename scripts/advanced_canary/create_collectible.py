@@ -8,8 +8,9 @@ import time
 
 
 def main():
+    # This script hould be used only in testnet environment as it relies on an existing AdvancedCanaryCollectible[0]
     account = get_account()
-    canary_advanced_collectible = AdvancedCanaryCollectible[1]
+    canary_advanced_collectible = AdvancedCanaryCollectible[-1]
 
     # 4 Additional Canary Advanced NFT can be now minted
     token_id = mint_advanced_canary_collectible(account, canary_advanced_collectible)
