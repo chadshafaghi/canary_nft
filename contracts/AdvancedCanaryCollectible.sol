@@ -64,13 +64,16 @@ contract AdvancedCanaryCollectible is
 
     mapping(uint256 => uint256) public tokenIdToCanaryRandomBreed; //Store the Breed identified for one tokenId. Breed are goin from 1 to 10. 0 is not allowed
 
+    mapping(uint256 => string) public tokenIdToTokenURI; //Store the JSON TokenURI geenrated for this TokenId
+
     event randomBreedRequest(uint256 indexed requestId, uint256 tokenId);
     event randomBreedAssigned(uint256 indexed requestId, uint256 randomNumber);
+    event tokenMetadataGenerated(uint256 indexed tokenId, string tokenUri);
 
     Counters.Counter public tokenCounter;
 
-    string nftName = "Simple Canary NFT";
-    string nftSymbol = "sCAN";
+    string nftName = "Canary Land NFT Collection";
+    string nftSymbol = "aCAN";
     uint256 _numberBreed = 10;
 
     address s_owner;
@@ -81,8 +84,6 @@ contract AdvancedCanaryCollectible is
         bytes32 _vrf_keyHash
     ) ERC721(nftName, nftSymbol) VRFConsumerBaseV2(_vrf_coordinator) {
         // initialising VRF coordinator and required configuration to generate randomness
-        //vrf_coordinator = _vrf_coordinator;
-        //vrf_link_token_contract = _vrf_link_token_contract;
         vrf_keyHash = _vrf_keyHash;
 
         s_owner = msg.sender;
@@ -220,8 +221,20 @@ contract AdvancedCanaryCollectible is
         uint256 randomBreed = (randomWords[0] % _numberBreed) + 1;
         tokenIdToCanaryRandomBreed[tokenId] = randomBreed;
 
-        //_setTokenURI(tokenId, tokenURI_);
-
         emit randomBreedAssigned(_requestId, randomBreed);
+    }
+
+    function setTokenUri(uint256 tokenId, string memory tokenUri)
+        external
+        onlyOwner
+    {
+        require(
+            tokenIdToCanaryRandomBreed[tokenId] > 0,
+            "The TokenId has no Random Breed assigned"
+        );
+        require(bytes(tokenUri).length > 0, "Token URI cannot be empty");
+        _setTokenURI(tokenId, tokenUri);
+        tokenIdToTokenURI[tokenId] = tokenUri;
+        emit tokenMetadataGenerated(tokenId, tokenUri);
     }
 }

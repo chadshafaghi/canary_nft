@@ -1,5 +1,8 @@
 from brownie import accounts, config, network, Contract
 from scripts.advanced_canary.mock_scripts import deploy_mocks, contract_to_mock
+from pathlib import Path
+import requests
+import os
 
 LOCAL_ENV = ["development", "ganache-local", "mainnet-fork"]
 opensea_url = "https://testnets.opensea.io/assets/{}/{}"
@@ -62,3 +65,46 @@ def get_contract(contract_name):
             contract_type._name, contract_address, contract_type.abi
         )
     return contract
+
+
+def upload_file_to_ipfs(file_path_binary):
+    # This function upload a local image into IPFS and return the decentralized endpoint.
+
+    # we open the file locally
+    with Path(file_path_binary).open("rb") as filepath:
+        image_binary = filepath.read()
+        # upload then into IPFS using CLI command and local node and create a POST request to add our imag to IPFS.
+        ipfs_url = "http://127.0.0.1:5001"
+        ipfs_add_endpoint = "/api/v0/add"
+        response = requests.post(
+            url=ipfs_url + ipfs_add_endpoint, files={"file": image_binary}
+        )
+        ipfs_hash = response.json()["Hash"]
+        filename = file_path_binary.split("/")[-1:][0]
+        img_uri = f"https://ipfs.io/ipfs/{ipfs_hash}?filename={filename}"
+        return img_uri
+
+
+def upload_file_to_pinata(file_path_binary):
+    # This function upload a local image into Pinata Pin service. In case our local node IPFS hasn't propagated and our daemon is down.
+
+    filename = file_path_binary.split("/")[-1:][0]
+    headers = {
+        "pinata_api_key": os.getenv("PINATA_API_KEY"),
+        "pinata_secret_api_key": os.getenv("PINATA_API_SECRET"),
+    }
+
+    # we open the file locally
+    with Path(file_path_binary).open("rb") as filepath:
+        image_binary = filepath.read()
+        # upload then into IPFS using CLI command and local node and create a POST request to add our imag to IPFS.
+        pinata_base_url = "https://api.pinata.cloud/"
+        endpoint = "pinning/pinFileToIPFS"
+        response = requests.post(
+            url=pinata_base_url + endpoint,
+            files={"file": (filename, image_binary)},
+            headers=headers,
+        )
+        ipfs_hash = response.json()["IpfsHash"]
+        img_uri = f"https://ipfs.io/ipfs/{ipfs_hash}?filename={filename}"
+        return img_uri

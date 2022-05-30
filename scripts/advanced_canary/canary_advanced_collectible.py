@@ -1,6 +1,7 @@
 from brownie import config, network, AdvancedCanaryCollectible
 from scripts.advanced_canary.vrf_helpful_scripts import LINK_TOKEN_REQUIRED, ETHER
 from scripts.helpful_scripts import get_contract, is_local_env
+from scripts.advanced_canary.canary_collection_create_metadata import generate_metadata
 import time
 from web3 import Web3
 
@@ -57,8 +58,17 @@ def reveal_advanced_canary_collectible_token(
         )
         tx_revealed.wait(1)
 
+    token_uri = generate_metadata(
+        canary_advanced_collectible.canaryRandomBreedByTokenID(token_id),
+        token_id,
+    )
+    tx_set_token_uri = canary_advanced_collectible.setTokenUri(
+        token_id, token_uri, {"from": account}
+    )
+    tx_set_token_uri.wait(1)
+
     print(
-        f"Advanced Canary Token {token_id} has been revealed, Breed will be #{canary_advanced_collectible.canaryRandomBreedByTokenID(token_id)}. "
+        f"Advanced Canary Token {token_id} has been revealed and Metadata generated, Canary Breed will be #{canary_advanced_collectible.canaryRandomBreedByTokenID(token_id)}. "
     )
     return tx_revealed
 

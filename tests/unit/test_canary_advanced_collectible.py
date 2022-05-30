@@ -121,6 +121,7 @@ def test_can_reveal_new_token():
     assert contract.tokenIdToCanaryRandomBreed(token_id) == random_number
     assert request_id == reveal_request_id
     assert random_number > 0
+    assert len(contract.tokenIdToTokenURI(token_id)) > 0
 
 
 def test_cancel_subscription():

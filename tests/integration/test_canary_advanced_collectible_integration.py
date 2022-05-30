@@ -22,6 +22,8 @@ import pytest
 
 
 def test_can_create_smart_contract():
+    network.priority_fee("2 gwei")
+
     if is_local_env():
         pytest.skip()
 
@@ -34,7 +36,7 @@ def test_can_create_smart_contract():
     # Verify that a subscription has been added and contract address not null
     assert contract.s_subscriptionId() > 0
     assert contract.address != None
-    assert contract.symbol() == "sCAN"
+    assert contract.symbol() == "aCAN"
     assert contract.tokenCounter() == 0
 
 
@@ -116,13 +118,13 @@ def test_can_reveal_new_token():
     fund_contract_with_link(account, contract)
     top_up_subscription_with_link(account, contract)
     token_id, tx_mint = mint_advanced_canary_collectible(account, contract)
-    tx_mint.events["randomBreedRequest"]["requestId"]
 
     # Act
     reveal_advanced_canary_collectible_token(account, contract, token_id)
 
-    # Verify that a subscription has been added
+    # Verify that the Token Breed has been assigned randomly and corresponding Metadata geenrated
     assert contract.tokenIdToCanaryRandomBreed(token_id) > 0
+    assert len(contract.tokenIdToTokenURI(token_id)) > 0
 
     # we withdraw pending LINK to keep our wallet balance healthy
     withdraw_link_balance(account, contract)
