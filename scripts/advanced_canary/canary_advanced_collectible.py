@@ -57,7 +57,7 @@ def reveal_advanced_canary_collectible_token(
             {"from": account},
         )
         tx_revealed.wait(1)
-
+    # We geenrate the metadata so that we can set the token URI
     token_uri = generate_metadata(
         canary_advanced_collectible.canaryRandomBreedByTokenID(token_id),
         token_id,
